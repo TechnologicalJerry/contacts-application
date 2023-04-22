@@ -12,4 +12,5 @@ app.listen(port, () => {
 
 app.get("/api/contacts", (req, res) => {
     res.send("Get all contacts");
+    res.json({ message: "Get all contacts" });
 })

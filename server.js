@@ -10,6 +10,8 @@ const app = express();
 
 connect();
 
+app.use(express.json());
+
 app.use('/api/contacts', () => routes);
 
 const port = process.env.SERVER_PORT || 9000;

@@ -1,11 +1,8 @@
 const express = require('express');
+const { getAllContactList } = require('../controllers/contact.controller');
 
 const router = express.Router();
 
-router.route("/getAllContacts", (req, res) => {
-    // const post = req.body;
-    // console.log('Posting Requiest', post);
-    res.json({ message: "Get all contacts" });
-});
+router.route("/getAllContacts").get(getAllContactList);
 
-module.expores = router;
+module.expores = router; 

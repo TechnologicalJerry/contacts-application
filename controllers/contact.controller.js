@@ -11,8 +11,22 @@ const getAllContactList = expressHandler(async (req, res, next) => {
     } else {
         console.log('Something wrong!');
     }
-})
+});
+
+const addNewContact = expressHandler(async (req, res, next) => {
+    const newContact = await Contact.insertMany({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phone: req.body.phone,
+    })
+    if (newContact) {
+        console.log('newContact added done!');
+    } else {
+        console.log('Something wrong!');
+    }
+});
 
 module.exports = {
-    getAllContactList
+    getAllContactList, addNewContact
 }

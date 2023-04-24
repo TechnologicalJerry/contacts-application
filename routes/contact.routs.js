@@ -1,8 +1,16 @@
 const express = require('express');
-const { getAllContactList, addNewContact } = require('../controllers/contact.controller');
+const contactController = require('../controllers/contact.controller');
 
 const router = express.Router();
 
-router.route("/getAllContacts").get(getAllContactList).post(addNewContact)
+// router.get("/", (req, res, next) => {
+//     res.status(200).json({ message: 'Welcome to contact API' });
+// })
 
-module.expores = router; 
+router.get("/getAll", contactController.getAllContactList);
+router.get("/:id", contactController.getContact);
+router.post("/addNew", contactController.addNewContact);
+router.put("/:id", contactController.updateContacts);
+router.delete("/:id", contactController.deleteContact);
+
+module.exports = router; 

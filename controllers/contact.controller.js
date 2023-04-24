@@ -8,9 +8,24 @@ const getAllContactList = expressHandler(async (req, res, next) => {
     const contacts = await Contact.find();
     if (contacts) {
         console.log('Getting all contacts');
+        res.json({ status: 200, message: 'Getting all contacts' });
     } else {
         console.log('Something wrong!');
+        res.status(500).json({ error: "something wromg" });
     }
+    return 0;
+});
+
+const getContact = expressHandler(async (req, res, next) => {
+    const contacts = await Contact.find();
+    if (contacts) {
+        console.log('Getting a contacts');
+        res.json({ status: 200, message: `Getting a contacts of ${req.params.id}` });
+    } else {
+        console.log('Something wrong!');
+        res.status(500).json({ error: "something wromg" });
+    }
+    // return 0;
 });
 
 const addNewContact = expressHandler(async (req, res, next) => {
@@ -22,11 +37,37 @@ const addNewContact = expressHandler(async (req, res, next) => {
     })
     if (newContact) {
         console.log('newContact added done!');
+        res.json({ status: 201, message: 'contacts added' });
     } else {
         console.log('Something wrong!');
+        res.status(500).json({ error: "something wromg" });
     }
 });
 
+const updateContacts = expressHandler(async (req, res, next) => {
+    const contacts = await Contact.find();
+    if (contacts) {
+        console.log('update contacts');
+        res.json({ status: 200, message: 'update contacts' });
+    } else {
+        console.log('Something wrong!');
+        res.status(500).json({ error: "something wromg" });
+    }
+    return 0;
+});
+
+const deleteContact = expressHandler(async (req, res, next) => {
+    const contacts = await Contact.find();
+    if (contacts) {
+        console.log('Delete contacts');
+        res.json({ status: 200, message: `Delete a contacts of id: ${req.params.id}` });
+    } else {
+        console.log('Something wrong!');
+        res.status(500).json({ error: "something wromg" });
+    }
+    return 0;
+});
+
 module.exports = {
-    getAllContactList, addNewContact
+    getAllContactList, getContact, addNewContact, updateContacts, deleteContact
 }

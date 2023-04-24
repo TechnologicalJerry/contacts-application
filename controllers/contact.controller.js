@@ -4,7 +4,7 @@ const expressHandler = require('express-async-handler');
 
 const Contact = require('../database/model');
 
-const getAllContactList = expressHandler(async (req, res, next) => {
+const getAllContactList = expressHandler(async (req, res) => {
     try {
         console.log('Getting all contacts');
         const contacts = await Contact.find();
@@ -21,7 +21,7 @@ const getAllContactList = expressHandler(async (req, res, next) => {
     }
 });
 
-const getContact = expressHandler(async (req, res, next) => {
+const getContact = expressHandler(async (req, res) => {
     try {
         console.log('Getting a contacts');
         const contacts = await Contact.find();
@@ -40,7 +40,6 @@ const getContact = expressHandler(async (req, res, next) => {
 });
 
 const addNewContact = expressHandler(async (req, res, next) => {
-
     try {
         console.log('newContact added done!');
         const newContact = await Contact.insertMany({

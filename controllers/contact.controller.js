@@ -5,25 +5,36 @@ const expressHandler = require('express-async-handler');
 const Contact = require('../database/model');
 
 const getAllContactList = expressHandler(async (req, res, next) => {
-    const contacts = await Contact.find();
-    if (contacts) {
+    try {
         console.log('Getting all contacts');
-        res.json({ status: 200, message: 'Getting all contacts' });
-    } else {
+        const contacts = await Contact.find();
+        res.json({
+            status: 200,
+            message: 'Getting all contacts',
+            data: contacts
+        });
+    } catch {
         console.log('Something wrong!');
-        res.status(500).json({ error: "something wromg" });
+        res.status(500).json({
+            error: "something wromg"
+        });
     }
-    return 0;
 });
 
 const getContact = expressHandler(async (req, res, next) => {
-    const contacts = await Contact.find();
-    if (contacts) {
+    try {
         console.log('Getting a contacts');
-        res.json({ status: 200, message: `Getting a contacts of ${req.params.id}` });
-    } else {
+        const contacts = await Contact.find();
+        res.json({
+            status: 200,
+            message: `Getting a contacts of ${req.params.id}`,
+            data: contacts
+        });
+    } catch {
         console.log('Something wrong!');
-        res.status(500).json({ error: "something wromg" });
+        res.status(500).json({
+            error: "something wromg"
+        });
     }
     // return 0;
 });

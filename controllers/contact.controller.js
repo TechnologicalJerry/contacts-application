@@ -41,12 +41,6 @@ const getContact = expressHandler(async (req, res) => {
 
 const addNewContact = expressHandler(async (req, res) => {
     try {
-        // const newContact = await Contact.insertMany({
-        //     firstName: req.body.firstName,
-        //     lastName: req.body.lastName,
-        //     email: req.body.email,
-        //     phone: req.body.phone,
-        // })
         const postData = req.body;
         const newContact = await Contact.create(postData);
         console.log('Adding New Contact Done!', newContact);

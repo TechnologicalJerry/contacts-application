@@ -80,17 +80,27 @@ const updateContacts = expressHandler(async (req, res) => {
 });
 
 const deleteContact = expressHandler(async (req, res, next) => {
-    const contacts = await Contact.find();
-    if (contacts) {
+    try {
         console.log('Delete contacts');
-        res.json({ status: 200, message: `Delete a contacts of id: ${req.params.id}` });
-    } else {
+        const contacts = await Contact.find();
+        res.json({
+            status: 200,
+            message: `Delete a contacts of id: ${req.params.id}`,
+            data: contacts
+        });
+    } catch {
         console.log('Something wrong!');
-        res.status(500).json({ error: "something wromg" });
+        res.status(500).json({
+            error: "something wromg"
+        });
     }
     return 0;
 });
 
 module.exports = {
-    getAllContactList, getContact, addNewContact, updateContacts, deleteContact
+    getAllContactList,
+    getContact,
+    addNewContact,
+    updateContacts,
+    deleteContact
 }

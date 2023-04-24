@@ -40,18 +40,25 @@ const getContact = expressHandler(async (req, res, next) => {
 });
 
 const addNewContact = expressHandler(async (req, res, next) => {
-    const newContact = await Contact.insertMany({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        phone: req.body.phone,
-    })
-    if (newContact) {
+
+    try {
         console.log('newContact added done!');
-        res.json({ status: 201, message: 'contacts added' });
-    } else {
+        const newContact = await Contact.insertMany({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            phone: req.body.phone,
+        })
+        res.json({
+            status: 201,
+            message: 'contacts added',
+            data: newContact
+        });
+    } catch {
         console.log('Something wrong!');
-        res.status(500).json({ error: "something wromg" });
+        res.status(500).json({
+            error: "something wromg"
+        });
     }
 });
 

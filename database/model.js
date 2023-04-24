@@ -17,6 +17,8 @@ const schema = mongoose.Schema({
         type: Number,
         require: true
     }
+}, {
+    timestamps: true
 });
 
 module.exports = mongoose.model('Contact', schema);

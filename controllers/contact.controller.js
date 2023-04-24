@@ -41,13 +41,13 @@ const getContact = expressHandler(async (req, res) => {
 
 const addNewContact = expressHandler(async (req, res, next) => {
     try {
-        console.log('Adding New Contact Done!');
         const newContact = await Contact.insertMany({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
             phone: req.body.phone,
         })
+        console.log('Adding New Contact Done!', newContact);
         res.json({
             status: 201,
             message: 'contacts added',

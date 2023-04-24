@@ -12,10 +12,6 @@ connect();
 
 app.use(express.json());
 
-// app.get('/test', (req, res) => {
-//     res.send('Welcome');
-// })
-
 app.use('/api/contacts', routes);
 
 const port = process.env.SERVER_PORT || 9000;

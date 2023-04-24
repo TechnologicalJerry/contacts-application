@@ -39,7 +39,7 @@ const getContact = expressHandler(async (req, res) => {
     // return 0;
 });
 
-const addNewContact = expressHandler(async (req, res, next) => {
+const addNewContact = expressHandler(async (req, res) => {
     try {
         const newContact = await Contact.insertMany({
             firstName: req.body.firstName,
@@ -56,7 +56,7 @@ const addNewContact = expressHandler(async (req, res, next) => {
     } catch {
         console.log('Something wrong!');
         res.status(500).json({
-            error: "something wromg"
+            error: "something wromg with adding new contact"
         });
     }
 });

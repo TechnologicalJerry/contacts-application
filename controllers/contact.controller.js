@@ -61,14 +61,20 @@ const addNewContact = expressHandler(async (req, res, next) => {
     }
 });
 
-const updateContacts = expressHandler(async (req, res, next) => {
-    const contacts = await Contact.find();
-    if (contacts) {
+const updateContacts = expressHandler(async (req, res) => {
+    try {
         console.log('update contacts');
-        res.json({ status: 200, message: 'update contacts' });
-    } else {
+        const contacts = await Contact.find();
+        res.json({
+            status: 200,
+            message: 'update contacts',
+            data: contacts
+        });
+    } catch {
         console.log('Something wrong!');
-        res.status(500).json({ error: "something wromg" });
+        res.status(500).json({
+            error: "something wromg"
+        });
     }
     return 0;
 });

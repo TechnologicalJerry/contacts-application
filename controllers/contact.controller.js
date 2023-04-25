@@ -42,6 +42,7 @@ const getContact = expressHandler(async (req, res) => {
 const addNewContact = expressHandler(async (req, res) => {
     try {
         const postData = req.body;
+        console.log('Adding New Contact Object :: =>', postData);
         const newContact = await Contact.create(postData);
         console.log('Adding New Contact Done!', newContact);
         res.json({
@@ -50,7 +51,7 @@ const addNewContact = expressHandler(async (req, res) => {
             data: newContact
         });
     } catch {
-        console.log('Something wrong!');
+        console.log('Something wrong with adding new contact');
         res.status(500).json({
             error: "something wromg with adding new contact"
         });

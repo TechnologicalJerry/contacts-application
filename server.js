@@ -13,9 +13,9 @@ connect();
 
 app.use(express.json());
 
-app.use(errorHandler);
-
 app.use('/api/contacts', routes);
+
+app.use(errorHandler);
 
 const port = process.env.SERVER_PORT || 9000;
 

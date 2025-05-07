@@ -61,5 +61,3 @@ A full-stack, enterprise-ready Contacts Management Application built using the l
 
 ---
 
-## 📦 Folder Structure (Monorepo)
-

@@ -9,8 +9,9 @@ export async function createUserHandler(
   res: Response
 ) {
   try {
-    const user = await createUser(req.body);
-    return res.send(user);
+    const body = omit(req.body, "passwordConfirmation");
+    const user = await createUser(body);
+    return res.status(201).send(user);
   } catch (e: any) {
     logger.error(e);
     return res.status(409).send(e.message);

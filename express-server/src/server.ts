@@ -9,12 +9,15 @@ import deserializeUser from "./middleware/deserializeUser";
 import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
 import swaggerDocs from "./utils/swagger";
 
+import cors from "cors";
+
 dotenv.config();
 
 const port = config.get<number>("port");
 
 const server = express();
 
+server.use(cors());
 server.use(express.json());
 
 server.use(deserializeUser);

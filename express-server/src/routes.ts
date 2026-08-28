@@ -1,10 +1,11 @@
 import { Express, Request, Response } from "express";
 import {
-  createProductHandler,
-  getProductHandler,
-  updateProductHandler,
-  deleteProductHandler,
-} from "./controller/product.controller";
+  createContactHandler,
+  getContactHandler,
+  getContactsHandler,
+  updateContactHandler,
+  deleteContactHandler,
+} from "./controller/contact.controller";
 import {
   createUserSessionHandler,
   getUserSessionsHandler,
@@ -14,11 +15,11 @@ import { createUserHandler } from "./controller/user.controller";
 import requireUser from "./middleware/requireUser";
 import validateResource from "./middleware/validateResource";
 import {
-  createProductSchema,
-  deleteProductSchema,
-  getProductSchema,
-  updateProductSchema,
-} from "./schema/product.schema";
+  createContactSchema,
+  deleteContactSchema,
+  getContactSchema,
+  updateContactSchema,
+} from "./schema/contact.schema";
 import { createSessionSchema } from "./schema/session.schema";
 import { createUserSchema } from "./schema/user.schema";
 
@@ -50,14 +51,14 @@ function routes(app: Express) {
    *           schema:
    *              $ref: '#/components/schemas/CreateUserInput'
    *     responses:
-   *      200:
-   *        description: Success
+   *      201:
+   *        description: User created
    *        content:
    *          application/json:
    *            schema:
    *              $ref: '#/components/schemas/CreateUserResponse'
    *      409:
-   *        description: Conflict
+   *        description: User already exists
    *      400:
    *        description: Bad request
    */
@@ -72,17 +73,13 @@ function routes(app: Express) {
    *    summary: Get all sessions
    *    responses:
    *      200:
-   *        description: Get all sessions for current user
-   *        content:
-   *          application/json:
-   *            schema:
-   *              $ref: '#/components/schemas/GetSessionResponse'
+   *        description: Get all active sessions for current user
    *      403:
    *        description: Forbidden
    *  post:
    *    tags:
    *    - Session
-   *    summary: Create a session
+   *    summary: Create a session (Login)
    *    requestBody:
    *      required: true
    *      content:
@@ -91,20 +88,16 @@ function routes(app: Express) {
    *            $ref: '#/components/schemas/CreateSessionInput'
    *    responses:
    *      200:
-   *        description: Session created
-   *        content:
-   *          application/json:
-   *            schema:
-   *              $ref: '#/components/schemas/CreateSessionResponse'
+   *        description: Session created with accessToken & refreshToken
    *      401:
    *        description: Unauthorized
    *  delete:
    *    tags:
    *    - Session
-   *    summary: Delete a session
+   *    summary: Delete a session (Logout)
    *    responses:
    *      200:
-   *        description: Session deleted
+   *        description: Session invalidated
    *      403:
    *        description: Forbidden
    */
@@ -120,122 +113,161 @@ function routes(app: Express) {
 
   /**
    * @openapi
-   * '/api/products':
+   * '/api/contacts':
    *  post:
    *     tags:
-   *     - Products
-   *     summary: Create a new product
+   *     - Contacts
+   *     summary: Create a new contact
+   *     security:
+   *       - bearerAuth: []
    *     requestBody:
    *       required: true
    *       content:
    *         application/json:
    *           schema:
-   *             $ref: '#/components/schema/Product'
+   *             $ref: '#/components/schemas/ContactInput'
+   *     responses:
+   *       201:
+   *         description: Contact created successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ContactResponse'
+   *       401:
+   *         description: Unauthorized
+   *  get:
+   *     tags:
+   *     - Contacts
+   *     summary: List contacts with search and pagination
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - name: page
+   *         in: query
+   *         description: Page number
+   *         required: false
+   *         schema:
+   *           type: integer
+   *           default: 1
+   *       - name: limit
+   *         in: query
+   *         description: Number of items per page
+   *         required: false
+   *         schema:
+   *           type: integer
+   *           default: 10
+   *       - name: q
+   *         in: query
+   *         description: Search term across name, email, phone, company
+   *         required: false
+   *         schema:
+   *           type: string
+   *       - name: category
+   *         in: query
+   *         description: Filter by contact category
+   *         required: false
+   *         schema:
+   *           type: string
+   *       - name: favorite
+   *         in: query
+   *         description: Filter by favorite status
+   *         required: false
+   *         schema:
+   *           type: boolean
    *     responses:
    *       200:
-   *         description: Product created
+   *         description: List of contacts with total counts
    *         content:
-   *          application/json:
-   *           schema:
-   *              $ref: '#/components/schema/productResponse'
-   *           example:
-   *             "user": "642a0de05f16e6dad68efdad"
-   *             "title": "Canon EOS 1500D DSLR Camera with 18-55mm Lens"
-   *             "description": "Designed for first-time DSLR owners who want impressive results straight out of the box, capture those magic moments no matter your level with the EOS 1500D. With easy to use automatic shooting modes, large 24.1 MP sensor, Canon Camera Connect app integration and built-in feature guide, EOS 1500D is always ready to go."
-   *             "price": 879.99
-   *             "image": "https://i.imgur.com/QlRphfQ.jpg"
-   *             "_id": "642a1cfcc1bec76d8a2e7ac2"
-   *             "productId": "product_xxqm8z3eho"
-   *             "createdAt": "2023-04-03T00:25:32.189Z"
-   *             "updatedAt": "2023-04-03T00:25:32.189Z"
-   *             "__v": 0
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/PaginatedContactResponse'
    */
   app.post(
-    "/api/products",
-    [requireUser, validateResource(createProductSchema)],
-    createProductHandler
+    "/api/contacts",
+    [requireUser, validateResource(createContactSchema)],
+    createContactHandler
   );
+
+  app.get("/api/contacts", requireUser, getContactsHandler);
 
   /**
    * @openapi
-   * '/api/products/{productId}':
+   * '/api/contacts/{contactId}':
    *  get:
    *     tags:
-   *     - Products
-   *     summary: Get a single product by the productId
+   *     - Contacts
+   *     summary: Get a single contact by contactId
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
-   *      - name: productId
+   *      - name: contactId
    *        in: path
-   *        description: The id of the product
+   *        description: Unique contact ID
    *        required: true
    *     responses:
    *       200:
    *         description: Success
    *         content:
-   *          application/json:
-   *           schema:
-   *              $ref: '#/components/schema/productResponse'
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/ContactResponse'
    *       404:
-   *         description: Product not found
+   *         description: Contact not found
    *  put:
    *     tags:
-   *     - Products
-   *     summary: Update a single product
+   *     - Contacts
+   *     summary: Update a contact
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
-   *      - name: productId
+   *      - name: contactId
    *        in: path
-   *        description: The id of the product
+   *        description: Unique contact ID
    *        required: true
    *     requestBody:
    *       required: true
    *       content:
    *         application/json:
    *           schema:
-   *             $ref: '#/components/schema/Product'
+   *             $ref: '#/components/schemas/ContactInput'
    *     responses:
    *       200:
-   *         description: Success
-   *         content:
-   *          application/json:
-   *           schema:
-   *              $ref: '#/components/schema/productResponse'
-   *       403:
-   *         description: Forbidden
+   *         description: Contact updated successfully
    *       404:
-   *         description: Product not found
+   *         description: Contact not found
    *  delete:
    *     tags:
-   *     - Products
-   *     summary: Delete a single product
+   *     - Contacts
+   *     summary: Delete a contact
+   *     security:
+   *       - bearerAuth: []
    *     parameters:
-   *      - name: productId
+   *      - name: contactId
    *        in: path
-   *        description: The id of the product
+   *        description: Unique contact ID
    *        required: true
    *     responses:
    *       200:
-   *         description: Product deleted
-   *       403:
-   *         description: Forbidden
+   *         description: Contact deleted successfully
    *       404:
-   *         description: Product not found
+   *         description: Contact not found
    */
-  app.put(
-    "/api/products/:productId",
-    [requireUser, validateResource(updateProductSchema)],
-    updateProductHandler
+  app.get(
+    "/api/contacts/:contactId",
+    [requireUser, validateResource(getContactSchema)],
+    getContactHandler
   );
 
-  app.get(
-    "/api/products/:productId",
-    validateResource(getProductSchema),
-    getProductHandler
+  app.put(
+    "/api/contacts/:contactId",
+    [requireUser, validateResource(updateContactSchema)],
+    updateContactHandler
   );
 
   app.delete(
-    "/api/products/:productId",
-    [requireUser, validateResource(deleteProductSchema)],
-    deleteProductHandler
+    "/api/contacts/:contactId",
+    [requireUser, validateResource(deleteContactSchema)],
+    deleteContactHandler
   );
 }
 
